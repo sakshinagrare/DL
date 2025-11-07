@@ -1,0 +1,257 @@
+import os
+import shutil
+import numpy as np
+
+# 1️⃣ Set paths
+# original_dir: Folder containing all class subfolders (e.g., accordion, airplanes)
+original_dir = "dataset_101/3_ObjectCategories"
+
+# base_dir: The folder where train/valid/test folders will be created
+base_dir = "dataset_split"
+
+# Split ratios for train, validation, and test sets
+split_ratios = {'train': 0.5, 'valid': 0.25, 'test': 0.25}
+
+# 2️⃣ Create train/valid/test folders
+# os.makedirs ensures the folder exists; exist_ok=True prevents error if folder already exists
+for split in split_ratios.keys():
+    os.makedirs(os.path.join(base_dir, split), exist_ok=True)
+
+# 3️⃣ Split images into train, validation, and test sets
+for category in os.listdir(original_dir):
+    class_dir = os.path.join(original_dir, category)  # Full path to class folder
+    if not os.path.isdir(class_dir):  # Skip if not a directory
+        continue
+
+    # List all image files in class folder (supports jpg, jpeg, png)
+    images = [f for f in os.listdir(class_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+
+    # Shuffle images randomly to ensure random train/valid/test split
+    np.random.shuffle(images)
+
+    # Calculate number of images for each split
+    n_total = len(images)
+    n_train = int(n_total * split_ratios['train'])
+    n_valid = int(n_total * split_ratios['valid'])
+
+    # Create dictionary of split images
+    split_images = {
+        'train': images[:n_train],                        # First part for training
+        'valid': images[n_train:n_train+n_valid],         # Next part for validation
+        'test': images[n_train+n_valid:]                  # Remaining part for testing
+    }
+
+    # Copy images into their respective folders
+    for split, imgs in split_images.items():
+        split_class_dir = os.path.join(base_dir, split, category)  # Folder for this class & split
+        os.makedirs(split_class_dir, exist_ok=True)               # Ensure folder exists
+        for img in imgs:
+            shutil.copy(os.path.join(class_dir, img), os.path.join(split_class_dir, img))  # Copy image
+
+print("✅ Data split into train/valid/test successfully.")
+
+# 4️⃣ Optional: Check which classes exist in each split
+print("Train classes:", os.listdir(os.path.join(base_dir, 'train')))
+print("Valid classes:", os.listdir(os.path.join(base_dir, 'valid')))
+print("Test classes:", os.listdir(os.path.join(base_dir, 'test')))
+
+
+import os, shutil
+from sklearn.model_selection import train_test_split
+
+original_dir = "dataset_101/3_ObjectCategories"
+base_dir = "dataset_101"
+splits = ['train', 'valid', 'test']
+
+# Create directories
+for split in splits:
+    os.makedirs(os.path.join(base_dir, split), exist_ok=True)
+
+# Split images for each class safely
+for category in os.listdir(original_dir):
+    class_dir = os.path.join(original_dir, category)
+    if not os.path.isdir(class_dir):
+        continue
+    images = os.listdir(class_dir)
+    
+    # If only 1 image, put it in train
+    if len(images) == 1:
+        train_imgs = images
+        valid_imgs, test_imgs = [], []
+    elif len(images) == 2:
+        # 1 for train, 1 for test, no validation
+        train_imgs = [images[0]]
+        valid_imgs = []
+        test_imgs = [images[1]]
+    else:
+        # Normal split for 3+ images
+        train_imgs, temp_imgs = train_test_split(images, test_size=0.5, random_state=42)
+        if len(temp_imgs) == 1:
+            valid_imgs = [temp_imgs[0]]
+            test_imgs = []
+        else:
+            valid_imgs, test_imgs = train_test_split(temp_imgs, test_size=0.5, random_state=42)
+
+    # Copy images to respective folders
+    for split_name, split_images in zip(splits, [train_imgs, valid_imgs, test_imgs]):
+        split_class_dir = os.path.join(base_dir, split_name, category)
+        os.makedirs(split_class_dir, exist_ok=True)
+        for img in split_images:
+            shutil.copy(os.path.join(class_dir, img), os.path.join(split_class_dir, img))
+
+print("✅ Dataset safely split into train/valid/test.")
+
+
+# ✅ Import required libraries
+import os
+import shutil
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.applications import VGG16
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Flatten, Dense, Dropout
+from tensorflow.keras.optimizers import Adam
+
+# -----------------------------
+# 1️⃣ Define directories
+# -----------------------------
+original_dir = "dataset_101/101_ObjectCategories"  # Your extracted folder
+base_dir = "dataset_101_split"  # Folder to hold train/valid/test
+
+splits = ['train', 'valid', 'test']
+for split in splits:
+    os.makedirs(os.path.join(base_dir, split), exist_ok=True)
+
+
+original_dir = "dataset_101/3_ObjectCategories"  # Correct folder with all classes
+base_dir = "dataset_101_split"
+
+
+
+import os
+import shutil
+from sklearn.model_selection import train_test_split
+
+original_dir = "dataset_101/3_ObjectCategories"  # folder containing all classes
+base_dir = "dataset_101_split"
+splits = ['train', 'valid', 'test']
+
+import shutil
+
+extra = '3_ObjectCategories'  # folder to remove
+shutil.rmtree(os.path.join(train_dir, extra), ignore_errors=True)
+shutil.rmtree(os.path.join(valid_dir, extra), ignore_errors=True)
+shutil.rmtree(os.path.join(test_dir, extra), ignore_errors=True)
+
+# Create split folders
+for split in splits:
+    os.makedirs(os.path.join(base_dir, split), exist_ok=True)
+
+# Loop through each class
+for category in os.listdir(original_dir):
+    class_dir = os.path.join(original_dir, category)
+    if not os.path.isdir(class_dir):
+        continue
+
+    images = [img for img in os.listdir(class_dir) if os.path.isfile(os.path.join(class_dir, img))]
+    n_images = len(images)
+    if n_images == 0:
+        continue
+    elif n_images == 1:
+        train_imgs = images
+        valid_imgs = []
+        test_imgs = []
+    elif n_images == 2:
+        train_imgs = [images[0]]
+        valid_imgs = [images[1]]
+        test_imgs = []
+    else:
+        # Normal case: split 50/25/25
+        train_imgs, temp_imgs = train_test_split(images, test_size=0.5, random_state=42)
+        valid_imgs, test_imgs = train_test_split(temp_imgs, test_size=0.5, random_state=42)
+
+    for split_name, split_images in zip(splits, [train_imgs, valid_imgs, test_imgs]):
+        split_class_dir = os.path.join(base_dir, split_name, category)
+        os.makedirs(split_class_dir, exist_ok=True)
+        for img in split_images:
+            src = os.path.join(class_dir, img)
+            dst = os.path.join(split_class_dir, img)
+            if os.path.isfile(src):
+                shutil.copy(src, dst)
+
+print("✅ Dataset split completed successfully (handles small classes).")
+
+
+
+# 1️⃣ Import libraries
+import os
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.applications import VGG16
+from tensorflow.keras import models, layers
+from tensorflow.keras.optimizers import Adam
+
+# 2️⃣ Set dataset paths
+train_dir = 'dataset_101_split/train'
+valid_dir = 'dataset_101_split/valid'
+# We'll skip test for now since images are very few
+
+# 3️⃣ Data augmentation for training, simple preprocessing for validation
+train_datagen = ImageDataGenerator(
+    rescale=1./255,
+    rotation_range=30,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True,
+    fill_mode='nearest'
+)
+
+
+# 4️⃣ Create data generators
+train_gen = train_datagen.flow_from_directory(
+    train_dir,
+    target_size=(224, 224),
+    batch_size=3,          # 1 image per class in batch
+    class_mode='categorical'
+)
+
+valid_gen = valid_datagen.flow_from_directory(
+    valid_dir,
+    target_size=(224, 224),
+    batch_size=3,
+    class_mode='categorical'
+)
+
+
+# 5️⃣ Load pretrained VGG16 model without top layer
+vgg_base = VGG16(weights='imagenet', include_top=False, input_shape=(224,224,3))
+
+# Freeze convolutional base
+vgg_base.trainable = False
+
+
+# 6️⃣ Add custom classifier on top
+model = models.Sequential([
+    vgg_base,
+    layers.Flatten(),
+    layers.Dense(256, activation='relu'),
+    layers.Dropout(0.4),
+    layers.Dense(3, activation='softmax')  # 3 classes
+])
+
+# 7️⃣ Compile model
+model.compile(optimizer=Adam(learning_rate=0.001),
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+
+
+# 8️⃣ Train model
+history = model.fit(
+    train_gen,
+    validation_data=valid_gen,
+    epochs=5  # small number due to tiny dataset
+)
+
+# ✅ Done
