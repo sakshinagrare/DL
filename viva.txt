@@ -1,0 +1,237 @@
+🧠 Assignment No. 1 – Study of Deep Learning Packages (TensorFlow, Keras, Theano, PyTorch)
+Viva Questions & Answers
+Q.No.	Question	Answer
+1	What is Deep Learning?	Deep Learning is a subset of Machine Learning based on neural networks with multiple layers that automatically learn hierarchical features from data.
+2	Name some popular Deep Learning frameworks.	TensorFlow, Keras, PyTorch, Theano, MXNet, and Caffe.
+3	What is TensorFlow?	TensorFlow is an open-source library developed by Google for numerical computation and large-scale machine learning using data flow graphs.
+4	What is Keras?	Keras is a high-level neural network API written in Python that runs on top of TensorFlow for quick model development.
+5	What is Theano?	Theano is a Python library that allows you to define, optimize, and evaluate mathematical expressions involving multi-dimensional arrays efficiently.
+6	What is PyTorch?	PyTorch is an open-source Deep Learning framework developed by Facebook’s AI Research lab, providing dynamic computation graphs and GPU acceleration.
+7	What is the main difference between TensorFlow and PyTorch?	TensorFlow uses static computation graphs (define-and-run), while PyTorch uses dynamic computation graphs (define-by-run).
+8	What are pretrained models in TensorFlow?	Models trained on large datasets (like ImageNet) that can be fine-tuned for new tasks using transfer learning.
+9	Mention one case study using TensorFlow.	PayPal uses TensorFlow for fraud detection and customer behavior prediction.
+10	What are Keras Tuner and AutoKeras?	Keras Tuner helps automate hyperparameter tuning; AutoKeras provides AutoML functionality to design optimal models automatically.
+🔹 Conceptual + Code-based Viva Questions and Answers
+Q.No.	Question	Detailed Answer
+1	What command is used to install TensorFlow in Ubuntu?	pip install --upgrade tensorflow inside a virtual environment after activating it with source virtualenv/bin/activate.
+2	Why do we create a virtual environment before installing TensorFlow?	To isolate project dependencies and prevent version conflicts between Python packages. Each project can maintain its own environment.
+3	What does the command python3 -m venv virtualenv do?	It creates a new virtual environment named virtualenv that includes its own Python interpreter and PIP.
+4	What is the purpose of upgrading PIP (pip install --upgrade pip)?	To ensure the latest compatible package installer version is used before installing TensorFlow and Keras.
+5	How do you verify the Keras installation?	By running pip3 show keras or importing it in Python: import keras; print(keras.__version__).
+6	What is the difference between tensorflow.keras and keras?	tensorflow.keras is the official high-level API integrated into TensorFlow; keras is the standalone library.
+7	What is a tensor in TensorFlow?	A tensor is a multi-dimensional array (like NumPy array) used to represent data in deep learning models.
+8	What is the output of the TensorFlow test program?	It prints the TensorFlow version and confirms successful import without error.
+9	What does this Keras code do?
+(train_images, train_labels), (test_images, test_labels) = datasets.mnist.load_data()	It loads the MNIST dataset of handwritten digits into training and testing sets.
+10	What does the following Theano code do?
+x = T.dscalar('x'); y = T.dscalar('y'); z = x + y; f = function([x, y], z)	It defines a symbolic addition operation using Theano tensors and compiles it into an executable function f.
+11	What is the output of f(5,7) in Theano?	It outputs 12.0, showing that the symbolic addition works as expected.
+12	What does the command print(torch.__version__) do in PyTorch?	It prints the installed PyTorch version to confirm installation success.
+13	How is PyTorch different from Theano?	PyTorch supports dynamic computation graphs, while Theano uses static graphs and is no longer actively maintained.
+14	What are the core libraries imported in this assignment?	tensorflow, keras, theano, torch, numpy, pandas, sklearn.
+15	How do you confirm GPU availability in TensorFlow?	tf.config.list_physical_devices('GPU') — it lists available GPU devices.
+🧠 Assignment 1 – Study of Deep Learning Packages
+Q.No.	Question	Answer
+1	What is the difference between Machine Learning and Deep Learning?	Machine Learning uses algorithms to parse data and learn from it; Deep Learning uses neural networks with many layers that automatically extract high-level features from raw data.
+2	What is a computational graph?	A directed graph that represents the flow of operations and data dependencies during computation in frameworks like TensorFlow and Theano.
+3	Why is GPU important in Deep Learning?	GPUs perform parallel computation efficiently, reducing training time for large neural networks.
+4	What is backpropagation?	A training algorithm that computes gradients of the loss function with respect to weights using the chain rule and updates them via optimization.
+5	What is an epoch, batch, and iteration?	One epoch = full dataset pass; one batch = subset of data; iteration = one parameter update per batch.
+6	Why is TensorFlow called “dataflow programming”?	Because computation is represented as a data flow graph where nodes represent operations and edges represent data tensors.
+7	What are placeholders and variables in TensorFlow 1.x?	Placeholders hold input data; Variables store parameters and persist during training.
+8	What is eager execution in TensorFlow 2.x?	It allows operations to run immediately (imperative style) instead of building a computation graph first.
+9	Which backend engines can Keras use?	TensorFlow, Theano, CNTK (Microsoft Cognitive Toolkit).
+10	What is Autograd in PyTorch?	It is PyTorch’s automatic differentiation engine that computes gradients dynamically during backpropagation.
+
+
+🧩 Assignment No. 2 – Implementing Feedforward Neural Networks
+Q.No.	Question	Answer
+1	What is a Feedforward Neural Network (FNN)?	It is a neural network where connections between nodes do not form cycles; data flows from input to output.
+2	What is an epoch in training?	One epoch is a complete pass of the entire training dataset through the network.
+3	What optimizer did you use in this experiment?	Stochastic Gradient Descent (SGD).
+4	What is the difference between Sigmoid and Softmax activation?	Sigmoid outputs a probability for binary classification; Softmax outputs probabilities across multiple classes.
+5	Why is the dataset flattened in FNNs?	To convert 2D image matrices into 1D vectors suitable for dense layers.
+6	What are MNIST and CIFAR-10 datasets?	MNIST contains 28×28 grayscale digits; CIFAR-10 contains 32×32 color images of 10 object classes.
+7	What is a cost function?	A mathematical function that measures the error between predicted and actual outputs; e.g., Mean Square Error.
+8	Why do we normalize input data?	To scale input values into a uniform range (e.g., 0–1) to improve convergence and performance.
+9	What is one-hot encoding?	Representing categorical labels as binary vectors with one ‘1’ indicating the class.
+10	What metrics are used for model evaluation?	Accuracy, Precision, Recall, F1-score, and Loss.
+Q.No.	Question	Detailed Answer
+1	What is the command to import MNIST dataset in Keras?	from tensorflow.keras.datasets import mnist
+2	How do you flatten the dataset for FNN?	Use x_train = x_train.reshape((x_train.shape[0], -1)) — this converts 28×28 images to 784-element vectors.
+3	Why is data normalized using /255.0?	To scale pixel values from 0–255 to 0–1 for faster convergence.
+4	What is the purpose of one-hot encoding labels?	It converts integer class labels (0–9) into binary vectors required for categorical classification.
+5	What is the Keras Sequential model?	A linear stack of layers created by model = Sequential().
+6	Write sample code to define a simple feedforward model.	python from tensorflow.keras.models import Sequential from tensorflow.keras.layers import Dense model = Sequential([ Dense(512, activation='sigmoid', input_shape=(784,)), Dense(10, activation='softmax') ])
+7	What optimizer is used in your program?	Stochastic Gradient Descent (SGD): optimizer = SGD(learning_rate=0.01).
+8	How do you compile the model?	model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
+9	What command trains the model?	model.fit(x_train, y_train, epochs=10, batch_size=32, validation_data=(x_test, y_test))
+10	What command evaluates the model?	model.evaluate(x_test, y_test)
+11	What are the outputs of training?	Training loss and accuracy per epoch, shown in the console or plotted using matplotlib.
+12	How do you plot accuracy and loss graphs?	plt.plot(history.history['accuracy']); plt.plot(history.history['val_accuracy']);
+13	What function from sklearn is used for classification metrics?	from sklearn.metrics import classification_report
+14	What is the difference between train and test accuracy?	Train accuracy measures model performance on training data; test accuracy measures generalization on unseen data.
+15	Why is batch size important?	It determines how many samples are propagated before updating model weights; affects convergence speed and stability.
+Q.No.	Question	Answer
+1	What are weights and biases in neural networks?	Weights determine the strength of connection between neurons; biases allow shifting the activation function for better fitting.
+2	What is the role of the activation function?	It introduces non-linearity, enabling the model to learn complex patterns.
+3	List common activation functions.	Sigmoid, Tanh, ReLU, Leaky ReLU, Softmax.
+4	What happens if you don’t use an activation function?	The network behaves like a linear model, regardless of the number of layers.
+5	What is gradient descent?	An optimization algorithm that minimizes the cost function by iteratively updating weights in the direction of the negative gradient.
+6	What are exploding and vanishing gradients?	When gradients become too large or too small during backpropagation, causing unstable or slow learning.
+7	How can you prevent vanishing gradients?	Use ReLU activation and careful initialization like He or Xavier initialization.
+8	What is the role of the learning rate?	Controls how much weights are updated during training; too high → diverge, too low → slow convergence.
+9	What is the confusion matrix?	A table showing correct and incorrect predictions across different classes.
+10	What is the difference between training accuracy and validation accuracy?	Training accuracy measures fit on training data; validation accuracy measures generalization on unseen data.
+
+
+
+🖼️ Assignment No. 3 – Build the Image Classification Model
+Q.No.	Question	Answer
+1	What is Image Classification?	The task of assigning a label to an image based on its visual content.
+2	What is CNN?	Convolutional Neural Network – a class of deep networks used primarily for image and video analysis.
+3	What is a Convolution operation?	It’s an operation where a filter (kernel) slides over an image to extract features.
+4	What is the purpose of pooling layers?	To reduce spatial dimensions and computation by downsampling feature maps.
+5	What are the main layers in CNN?	Convolution, Pooling, Flatten, Fully Connected (Dense).
+6	Why do we use ReLU activation?	To introduce non-linearity and avoid vanishing gradients.
+7	What is the function of Softmax in CNN?	It converts logits into class probabilities in the output layer.
+8	Why do we split data into train, validation, and test sets?	To train, tune, and evaluate the model performance on unseen data.
+9	What is overfitting?	When a model performs well on training data but poorly on test data due to memorization.
+10	What techniques can reduce overfitting?	Dropout, data augmentation, regularization, and early stopping.
+Q.No.	Question	Detailed Answer
+1	What function loads an image dataset in Keras?	tf.keras.datasets.cifar10.load_data()
+2	What does the Conv2D layer do?	Applies convolutional filters to extract spatial features from input images.
+3	What parameters are used in Conv2D?	Filters, kernel_size, activation, padding, input_shape. Example: Conv2D(32, (3,3), activation='relu', input_shape=(32,32,3)).
+4	What is the purpose of MaxPooling2D layer?	Reduces the spatial dimensions while keeping dominant features.
+5	How is the CNN model defined in code?	python model = Sequential([ Conv2D(32, (3,3), activation='relu'), MaxPooling2D((2,2)), Flatten(), Dense(128, activation='relu'), Dense(10, activation='softmax') ])
+6	Why use Flatten() before dense layers?	Converts 2D feature maps into 1D vectors suitable for fully connected layers.
+7	What is Dropout and why is it used?	A regularization technique that randomly drops neurons to prevent overfitting.
+8	How do you compile a CNN model?	model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+9	What is the purpose of train_test_split in sklearn?	To divide the dataset into training and testing sets.
+10	What are evaluation metrics used?	Accuracy, precision, recall, and confusion matrix.
+11	What does normalization do for image pixels?	Scales image pixel values to 0–1 range for faster training.
+12	What are kernels in CNN?	Learnable filters that detect features like edges, textures, and patterns.
+13	What function plots model summary?	model.summary() — displays all layers, parameters, and output shapes.
+14	What are the output classes for CIFAR-10?	Airplane, automobile, bird, cat, deer, dog, frog, horse, ship, truck.
+15	How do you save a trained model?	model.save('image_classification_model.h5').
+Q.No.	Question	Answer
+1	What are low-level and high-level features in images?	Low-level features: edges, textures, colors; high-level features: shapes, objects, and semantic patterns.
+2	What is stride in convolution?	Number of pixels by which the filter moves across the image during convolution.
+3	What is padding and why is it used?	Adding extra pixels (usually zeros) around the image to preserve spatial dimensions after convolution.
+4	What are hyperparameters in CNN?	Parameters set before training: filter size, stride, number of layers, learning rate, batch size, etc.
+5	What is the receptive field?	The region in the input image that influences a neuron’s activation in a later layer.
+6	Why do we prefer smaller kernels (3×3) in CNNs?	Smaller kernels reduce computation while capturing finer local features effectively.
+7	What is Batch Normalization?	A technique to normalize layer inputs, speeding up training and improving stability.
+8	What are feature maps?	The output of convolution layers that represent learned features at various spatial locations.
+9	What is the difference between CNN and FNN?	CNNs use convolutional and pooling layers for spatial data; FNNs use dense layers for general tabular data.
+10	Why do we use dropout?	To reduce overfitting by randomly disabling neurons during training.
+
+
+
+❤️ Assignment No. 4 – ECG Anomaly Detection using Autoencoders
+Q.No.	Question	Answer
+1	What is anomaly detection?	Identifying patterns that do not conform to expected behavior or normal data.
+2	What is an Autoencoder?	A neural network that learns to compress (encode) and reconstruct (decode) input data.
+3	What are Encoder and Decoder?	Encoder compresses input into latent representation; Decoder reconstructs data from latent space.
+4	What is a reconstruction error?	The difference between input data and its reconstructed version.
+5	What type of loss function is used in Autoencoders?	Mean Squared Error (MSE) or Mean Squared Logarithmic Error (MSLE).
+6	What optimizer did you use?	Adam optimizer.
+7	What is MinMaxScaler?	A preprocessing technique that scales features to a range (usually 0 to 1).
+8	Why is only the normal class used for training?	Because anomaly detection is based on learning the pattern of normal data to detect deviations.
+9	What is an anomaly score?	A numerical measure representing how different a sample is from the learned normal distribution.
+10	What does the validation loss indicate?	It shows how well the model generalizes to unseen (validation) data.
+Q.No.	Question	Detailed Answer
+1	What is Word2Vec?	It is a method to represent words as dense numerical vectors based on their context in a corpus.
+2	What is CBOW?	It predicts a target word from its surrounding context words.
+3	What is Skip-gram?	It predicts surrounding context words from a target word.
+4	What does Tokenizer do in Keras?	Converts text into integer sequences. Example: tokenizer = Tokenizer(); tokenizer.fit_on_texts(corpus).
+5	How are input and target pairs generated?	Using a sliding window mechanism that extracts context words and target words.
+6	What are key layers used in the CBOW model?	Embedding, Lambda, and Dense layers in a Sequential model.
+7	What is the function of Embedding layer?	Maps each word index to a dense vector representation of fixed dimension.
+8	Why use categorical_crossentropy as loss?	Because the model predicts a probability distribution over vocabulary classes.
+9	What is yield() used for in data generator?	It returns batches of data lazily without loading the full dataset into memory.
+10	What is the use of Gensim library here?	For loading trained word vectors and finding similar words using most_similar().
+11	How do you create vector files?	By writing trained embedding weights to a text file with words and their corresponding vectors.
+12	What is the role of window size?	Determines the number of context words considered on both sides of the target word.
+13	What does np_utils.to_categorical() do?	Converts integer labels to one-hot encoded format.
+14	How do you test the trained model?	Use cbow_output.most_similar(positive=['word']) to find semantically related words.
+15	What is the final output of CBOW training?	A trained embedding matrix that captures semantic relationships between words.
+Q.No.	Question	Answer
+1	What is unsupervised learning?	A type of learning where the model finds patterns in data without using labeled outputs.
+2	What is the basic principle of Autoencoders?	They learn to reconstruct their inputs by compressing and decompressing data through a latent layer.
+3	What is the latent space dimension?	The size of the encoded representation; controls how much information is compressed.
+4	What happens if the latent dimension is too small?	The model loses important information and reconstruction quality drops.
+5	What is a denoising Autoencoder?	An Autoencoder trained to reconstruct clean inputs from noisy versions, improving robustness.
+6	What is an undercomplete Autoencoder?	One where the latent space dimension is smaller than input, forcing it to learn compressed features.
+7	What is overcomplete Autoencoder?	When latent dimension is larger than input; can risk learning identity mapping.
+8	Why is MSE used as a loss function here?	Because it measures how close the reconstructed signal is to the original.
+9	What are some applications of Autoencoders?	Image denoising, anomaly detection, dimensionality reduction, recommendation systems.
+10	What is reconstruction threshold in anomaly detection?	A predefined cutoff value above which reconstruction error indicates an anomaly.
+
+
+
+💬 Assignment No. 5 – Implement the Continuous Bag of Words (CBOW) Model
+Q.No.	Question	Answer
+1	What is NLP?	Natural Language Processing – a field of AI that enables machines to understand and process human language.
+2	What is Word Embedding?	A representation of words in continuous vector space where similar words are closer.
+3	What is CBOW model?	CBOW predicts a target word based on surrounding context words.
+4	What is Skip-gram model?	The reverse of CBOW – it predicts context words based on a given target word.
+5	What is the input to a CBOW model?	Context words (surrounding words).
+6	What is the output of CBOW?	The target word (center word).
+7	What is a Tokenizer?	A function or tool that splits text into tokens (words).
+8	What is window size in CBOW?	Number of context words considered around a target word.
+9	What is the role of Embedding layer in Keras?	Converts integer-encoded words into dense vector representations.
+10	What is the loss function used?	Categorical Crossentropy.
+Q.No.	Question	Detailed Answer
+1	What is Word2Vec?	It is a method to represent words as dense numerical vectors based on their context in a corpus.
+2	What is CBOW?	It predicts a target word from its surrounding context words.
+3	What is Skip-gram?	It predicts surrounding context words from a target word.
+4	What does Tokenizer do in Keras?	Converts text into integer sequences. Example: tokenizer = Tokenizer(); tokenizer.fit_on_texts(corpus).
+5	How are input and target pairs generated?	Using a sliding window mechanism that extracts context words and target words.
+6	What are key layers used in the CBOW model?	Embedding, Lambda, and Dense layers in a Sequential model.
+7	What is the function of Embedding layer?	Maps each word index to a dense vector representation of fixed dimension.
+8	Why use categorical_crossentropy as loss?	Because the model predicts a probability distribution over vocabulary classes.
+9	What is yield() used for in data generator?	It returns batches of data lazily without loading the full dataset into memory.
+10	What is the use of Gensim library here?	For loading trained word vectors and finding similar words using most_similar().
+11	How do you create vector files?	By writing trained embedding weights to a text file with words and their corresponding vectors.
+12	What is the role of window size?	Determines the number of context words considered on both sides of the target word.
+13	What does np_utils.to_categorical() do?	Converts integer labels to one-hot encoded format.
+14	How do you test the trained model?	Use cbow_output.most_similar(positive=['word']) to find semantically related words.
+15	What is the final output of CBOW training?	A trained embedding matrix that captures semantic relationships between words.
+Q.No.	Question	Answer
+1	What is distributional semantics?	The idea that words with similar meanings occur in similar contexts.
+2	What is the difference between one-hot encoding and word embeddings?	One-hot encoding is sparse and high-dimensional; embeddings are dense and capture semantic relationships.
+3	Why do we use embeddings instead of one-hot vectors?	To reduce dimensionality and capture semantic similarity between words.
+4	What is vector arithmetic in Word2Vec?	Operations like king – man + woman = queen that demonstrate semantic relationships in embedding space.
+5	What are context and target words in CBOW?	Context = neighboring words; Target = the word being predicted.
+6	What is the skip window in CBOW?	Number of words on either side of the target word considered as context.
+7	How is the training objective of CBOW defined?	Maximize the probability of predicting the target word given the surrounding context words.
+8	What are some NLP tasks that use embeddings?	Text classification, sentiment analysis, named entity recognition, and machine translation.
+9	What is the dimension of the embedding matrix?	Vocabulary size × embedding vector size.
+10	What is the advantage of using pretrained embeddings like GloVe or Word2Vec?	They provide meaningful word representations trained on large corpora, improving performance on smaller datasets.
+
+
+🔍 Assignment No. 6 – Object Detection using Transfer Learning (CNN Architectures)
+Q.No.	Question	Answer
+1	What is Transfer Learning?	A technique where a model trained on one task is reused on another related task.
+2	What is a pretrained model?	A model that has been previously trained on a large dataset like ImageNet.
+3	Why freeze initial layers in transfer learning?	To preserve already-learned features and train only task-specific layers.
+4	Name some pretrained CNN architectures.	VGG16, ResNet, InceptionV3, MobileNet, DenseNet.
+5	What dataset did you use here?	Caltech-101 or ImageNet.
+6	What is data augmentation?	Technique to artificially increase training data by transformations like rotation, flipping, cropping, etc.
+7	What library is mainly used here?	PyTorch (torchvision models).
+8	What is the role of transforms in PyTorch?	Used for preprocessing and augmentation of image datasets.
+9	What is the optimizer used?	Adam optimizer or SGD.
+10	What is the main advantage of Transfer Learning?	Faster training and higher accuracy with limited data.
+Q.No.QuestionDetailed Answer1What is Transfer Learning?Using a pretrained model’s learned features on a new but related task.2Which pretrained model did you use?VGG16 model from torchvision.models.3How do you load a pretrained model?model = models.vgg16(pretrained=True)4Why do we freeze parameters in lower layers?To keep the learned low-level features (edges, textures) unchanged while retraining only top layers.5How do you freeze layers in PyTorch?for param in model.parameters(): param.requires_grad = False6How do you modify the classifier in VGG16?Replace the last fully connected layer: model.classifier[6] = nn.Sequential(nn.Linear(...), nn.ReLU(), nn.Dropout(0.4), nn.Linear(...), nn.LogSoftmax(dim=1)).7What is transforms.Compose() used for?To apply a series of image transformations such as resizing, cropping, normalization, etc.8What are ImageNet normalization values?Mean = [0.485, 0.456, 0.406], Std = [0.229, 0.224, 0.225].9What dataset is used?Caltech-101 dataset divided into train, validation, and test sets.10What is the optimizer used?Adam or SGD: optimizer = optim.Adam(model.parameters()).11What loss function is used?Negative Log Likelihood Loss: nn.NLLLoss().12How do you train the model?Using loops: for epoch in range(n_epochs): for data, targets in trainloader: out = model(data); loss = criterion(out, targets); loss.backward(); optimizer.step().13How do you check model accuracy?By comparing predictions and targets: torch.mean((pred == targets).float()).14What is early stopping?Halting training when validation loss stops improving to prevent overfitting.15Why is Transfer Learning effective?It reduces training time and improves accuracy when data is limited, since the model reuses pre-trained features.
+Q.No.	Question	Answer
+1	What is the main goal of Transfer Learning?	To leverage previously learned knowledge from one model/task for a new related task with less data.
+2	What are frozen layers?	Layers whose weights are not updated during training.
+3	What is fine-tuning?	Unfreezing some layers of a pretrained model and retraining them with a small learning rate for adaptation.
+4	What is the difference between feature extraction and fine-tuning?	Feature extraction keeps pretrained weights fixed; fine-tuning updates them for better task-specific performance.
+5	What are CNN architectures commonly used for Transfer Learning?	VGG16, ResNet50, InceptionV3, MobileNet, EfficientNet.
+6	What is ImageNet?	A large dataset of over 14 million labeled images used to pretrain CNNs.
+7	What are bounding boxes in object detection?	Rectangular boxes drawn around objects of interest to locate them within an image.
+8	What is the Intersection over Union (IoU) metric?	A measure of overlap between predicted and ground-truth bounding boxes.
+9	What is the difference between image classification and object detection?	Classification assigns one label per image; detection localizes multiple objects within an image.
+10	What are advantages of Transfer Learning?	Faster convergence, reduced training cost, better performance with limited data.
