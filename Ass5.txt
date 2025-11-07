@@ -1,0 +1,149 @@
+# 🧠 ASSIGNMENT 5: Continuous Bag of Words (CBOW) Model
+# ===============================================================
+
+# 🔹 Step 1: Import necessary libraries
+import numpy as np
+import re
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Embedding, Lambda
+import tensorflow as tf
+import seaborn as sns
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+
+# ---------------------------------------------------------------
+# 🔹 Step 2: Prepare and clean the dataset (create a small paragraph)
+# ---------------------------------------------------------------
+data = """
+Deep learning (also known as deep structured learning) is part of a broader family 
+of machine learning methods based on artificial neural networks with representation learning.
+Learning can be supervised, semi-supervised or unsupervised.
+Deep-learning architectures such as deep neural networks, deep belief networks, 
+deep reinforcement learning, recurrent neural networks, convolutional neural networks, 
+and Transformers have been applied to fields including computer vision, speech recognition, 
+natural language processing, machine translation, bioinformatics, drug design, 
+medical image analysis, climate science, material inspection and board game programs, 
+where they have produced results comparable to and in some cases surpassing human expert performance.
+"""
+
+# Split text into sentences
+sentences = data.split('.')
+
+# Clean sentences: remove symbols, convert to lowercase
+clean_sent = []
+for sentence in sentences:
+    if sentence.strip() == "":
+        continue
+    sentence = re.sub('[^A-Za-z0-9]+', ' ', sentence)   # remove special characters
+    sentence = sentence.lower().strip()
+    clean_sent.append(sentence)
+
+print("🧹 Cleaned Sentences:\n", clean_sent, "\n")
+
+# ---------------------------------------------------------------
+# 🔹 Step 3: Tokenize the words
+# ---------------------------------------------------------------
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(clean_sent)
+sequences = tokenizer.texts_to_sequences(clean_sent)
+
+print("🔢 Tokenized Sequences:\n", sequences, "\n")
+
+# Create word index dictionaries
+index_to_word = {}
+word_to_index = {}
+for i, seq in enumerate(sequences):
+    words = clean_sent[i].split()
+    for j, val in enumerate(seq):
+        index_to_word[val] = words[j]
+        word_to_index[words[j]] = val
+
+print("🗂 Word to Index Mapping:\n", word_to_index, "\n")
+
+# ---------------------------------------------------------------
+# 🔹 Step 4: Generate context-target word pairs for CBOW
+# ---------------------------------------------------------------
+context_size = 2  # window size on each side
+contexts = []
+targets = []
+
+for seq in sequences:
+    for i in range(context_size, len(seq) - context_size):
+        target = seq[i]
+        context = [seq[i - 2], seq[i - 1], seq[i + 1], seq[i + 2]]
+        contexts.append(context)
+        targets.append(target)
+
+print("✅ Example Context-Target pairs:")
+for i in range(5):
+    words = [index_to_word.get(w) for w in contexts[i]]
+    target_word = index_to_word.get(targets[i])
+    print(f"{words}  →  {target_word}")
+
+# Convert to numpy arrays
+X = np.array(contexts)
+Y = np.array(targets)
+
+# ---------------------------------------------------------------
+# 🔹 Step 5: Build the CBOW Neural Network
+# ---------------------------------------------------------------
+vocab_size = len(tokenizer.word_index) + 1  # total vocabulary size
+embedding_size = 10                         # dimension of embedding vector
+
+# CBOW architecture
+model = Sequential([
+    Embedding(input_dim=vocab_size, output_dim=embedding_size, input_length=4),
+    Lambda(lambda x: tf.reduce_mean(x, axis=1)),  # average context embeddings
+    Dense(256, activation='relu'),
+    Dense(512, activation='relu'),
+    Dense(vocab_size, activation='softmax')
+])
+
+# Compile model
+model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.summary()
+
+# ---------------------------------------------------------------
+# 🔹 Step 6: Train the Model
+# ---------------------------------------------------------------
+history = model.fit(X, Y, epochs=80, verbose=1)
+
+# ---------------------------------------------------------------
+# 🔹 Step 7: Visualize training progress
+# ---------------------------------------------------------------
+sns.lineplot(data=history.history)
+plt.title("📈 Training Accuracy & Loss over Epochs")
+plt.show()
+
+# ---------------------------------------------------------------
+# 🔹 Step 8: Test the trained model
+# ---------------------------------------------------------------
+test_sentences = [
+    "known as structured learning",
+    "transformers have applied to",
+    "where they produced results",
+    "cases surpassing expert performance"
+]
+
+for sent in test_sentences:
+    words = sent.split()
+    x_test = np.array([[word_to_index.get(w, 0) for w in words]])  # handle unseen words with 0
+    pred = model.predict(x_test)
+    pred_word = index_to_word.get(np.argmax(pred[0]), "unknown")
+    print(f"\n🔮 Input: {words} \n→ Predicted Target Word: {pred_word}")
+
+# ---------------------------------------------------------------
+# 🔹 Step 9: Visualize word embeddings (optional)
+# ---------------------------------------------------------------
+embeddings = model.get_weights()[0]
+pca = PCA(n_components=2)
+reduced_embeddings = pca.fit_transform(embeddings)
+
+plt.figure(figsize=(10, 7))
+plt.scatter(reduced_embeddings[:, 0], reduced_embeddings[:, 1])
+
+for word, i in word_to_index.items():
+    plt.annotate(word, (reduced_embeddings[i, 0], reduced_embeddings[i, 1]))
+plt.title("🧩 2D Visualization of Word Embeddings")
+plt.show()

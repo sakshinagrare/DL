@@ -1,0 +1,203 @@
+# ==============================================================
+# 🧩 Assignment 4: ECG Anomaly Detection using Autoencoders
+# ==============================================================
+# 📘 Step 1: Import Required Libraries
+# --------------------------------------------------------------
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import accuracy_score
+
+from tensorflow.keras import Model, Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.losses import MeanSquaredLogarithmicError
+
+print("✅ TensorFlow Version:", tf.__version__)
+
+
+# ==============================================================
+# 📘 Step 2: Load ECG Dataset
+# --------------------------------------------------------------
+# Dataset source (provided)
+path = "http://storage.googleapis.com/download.tensorflow.org/data/ecg.csv"
+
+# Load the dataset into a pandas DataFrame
+data = pd.read_csv(path, header=None)
+print("✅ Dataset Loaded Successfully!")
+print("Shape of dataset:", data.shape)
+
+# Preview first few rows
+display(data.head())
+
+
+# ==============================================================
+# 📘 Step 3: Data Exploration
+# --------------------------------------------------------------
+# The last column (index 140) is the Target (0 = Anomaly, 1 = Normal)
+# Remaining 140 columns are ECG signal features
+
+print("\nDataset Info:")
+print(data.info())
+
+# Split features and target
+features = data.drop(140, axis=1)
+target = data[140]
+
+
+# ==============================================================
+# 📘 Step 4: Train-Test Split
+# --------------------------------------------------------------
+# Split data into train (80%) and test (20%)
+X_train, X_test, y_train, y_test = train_test_split(
+    features, target, test_size=0.2, random_state=42
+)
+
+# For Novelty Detection → Train only on "Normal" class (1)
+X_train_normal = X_train[y_train == 1]
+
+print(f"Training Samples (Normal only): {X_train_normal.shape}")
+print(f"Testing Samples: {X_test.shape}")
+
+
+# ==============================================================
+# 📘 Step 5: Normalize Data using MinMaxScaler
+# --------------------------------------------------------------
+scaler = MinMaxScaler()
+
+X_train_scaled = scaler.fit_transform(X_train_normal)
+X_test_scaled = scaler.transform(X_test)
+
+print("✅ Data Scaled between 0 and 1.")
+
+
+# ==============================================================
+# 📘 Step 6: Define Autoencoder Model
+# --------------------------------------------------------------
+# Custom Autoencoder class (Encoder + Decoder)
+class AutoEncoder(Model):
+    def __init__(self, output_units, latent_dim=8):
+        super().__init__()
+        # Encoder: reduces dimensionality
+        self.encoder = Sequential([
+            Dense(64, activation='relu'),
+            Dropout(0.1),
+            Dense(32, activation='relu'),
+            Dropout(0.1),
+            Dense(16, activation='relu'),
+            Dropout(0.1),
+            Dense(latent_dim, activation='relu')
+        ])
+        # Decoder: reconstructs the input
+        self.decoder = Sequential([
+            Dense(16, activation='relu'),
+            Dropout(0.1),
+            Dense(32, activation='relu'),
+            Dropout(0.1),
+            Dense(64, activation='relu'),
+            Dropout(0.1),
+            Dense(output_units, activation='sigmoid')
+        ])
+
+    def call(self, inputs):
+        encoded = self.encoder(inputs)
+        decoded = self.decoder(encoded)
+        return decoded
+
+
+# ==============================================================
+# 📘 Step 7: Compile the Model
+# --------------------------------------------------------------
+model = AutoEncoder(output_units=X_train_scaled.shape[1])
+model.compile(
+    loss='msle',                # Mean Squared Logarithmic Error
+    metrics=['mse'],            # Track Mean Squared Error
+    optimizer='adam'            # Adam Optimizer
+)
+print("✅ Model Compiled Successfully!")
+
+
+# ==============================================================
+# 📘 Step 8: Train the Model
+# --------------------------------------------------------------
+history = model.fit(
+    X_train_scaled,             # Input
+    X_train_scaled,             # Target (reconstruction)
+    epochs=20,                  # Number of training epochs
+    batch_size=512,             # Batch size
+    validation_data=(X_test_scaled, X_test_scaled),
+    shuffle=True,
+    verbose=1
+)
+
+
+# ==============================================================
+# 📘 Step 9: Plot Training vs Validation Loss
+# --------------------------------------------------------------
+plt.figure(figsize=(8,5))
+plt.plot(history.history["loss"], label="Training Loss")
+plt.plot(history.history["val_loss"], label="Validation Loss")
+plt.title("Autoencoder Loss over Epochs")
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.legend()
+plt.show()
+
+
+# ==============================================================
+# 📘 Step 10: Define Helper Functions
+# --------------------------------------------------------------
+# Function to calculate threshold based on training reconstruction error
+def find_threshold(model, x_train_scaled):
+    reconstructions = model.predict(x_train_scaled)
+    reconstruction_errors = tf.keras.losses.msle(reconstructions, x_train_scaled)
+    threshold = np.mean(reconstruction_errors.numpy()) + np.std(reconstruction_errors.numpy())
+    return threshold
+
+
+# Function to predict anomalies
+def get_predictions(model, x_test_scaled, threshold):
+    reconstructions = model.predict(x_test_scaled)
+    errors = tf.keras.losses.msle(reconstructions, x_test_scaled)
+    anomaly_mask = pd.Series(errors) > threshold
+    preds = anomaly_mask.map(lambda x: 0.0 if x else 1.0)  # 0 = anomaly, 1 = normal
+    return preds
+
+
+# ==============================================================
+# 📘 Step 11: Detect Anomalies
+# --------------------------------------------------------------
+threshold = find_threshold(model, X_train_scaled)
+print(f"🔍 Calculated Threshold for Anomaly Detection: {threshold:.6f}")
+
+predictions = get_predictions(model, X_test_scaled, threshold)
+
+# ==============================================================
+# 📘 Step 12: Evaluate the Model
+# --------------------------------------------------------------
+accuracy = accuracy_score(predictions, y_test)
+print(f"✅ Accuracy Score: {accuracy:.3f}")
+
+# Display confusion matrix (optional)
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+
+cm = confusion_matrix(y_test, predictions)
+plt.figure(figsize=(5,4))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Anomaly','Normal'], yticklabels=['Anomaly','Normal'])
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("True")
+plt.show()
+
+
+# ==============================================================
+# ✅ Conclusion:
+# --------------------------------------------------------------
+# - Autoencoder learned to reconstruct normal ECG signals.
+# - Higher reconstruction errors indicate anomalies.
+# - Accuracy reflects how well anomalies were detected.
+# ==============================================================
